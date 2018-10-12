@@ -219,6 +219,21 @@
         }
 
         /**
+         * preload h2 server push resources
+         * @ignore
+         */
+        function preloadH2(data, onload, onerror) {
+            var httpReq = new XMLHttpRequest();
+
+            // tell the server we want to call h2 server pushing (nothing special needs to be done, the browser handles
+            // the h2 stream if needed)
+            httpReq.open("GET", data.src + api.nocache, true);
+            httpReq.withCredentials = me.loader.withCredentials;
+            httpReq.onerror = onerror;
+            httpReq.onload = onload;
+        }
+
+        /**
          * preload Binary files
          * @ignore
          */
@@ -525,6 +540,11 @@
             }
             // check ressource type
             switch (res.type) {
+                case "preload":
+                    // this is only for h2 server pushing resources needed
+                    preloadH2.call(this, res, onload, onerror);
+                    return 1;
+
                 case "binary":
                     // reuse the preloadImage fn
                     preloadBinary.call(this, res, onload, onerror);
