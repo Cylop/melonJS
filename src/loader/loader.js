@@ -231,6 +231,7 @@
             httpReq.withCredentials = me.loader.withCredentials;
             httpReq.onerror = onerror;
             httpReq.onload = onload;
+            httpReq.send();
         }
 
         /**
