@@ -1,5 +1,7 @@
 game.resources = [
 
+    { name: "_", type:"preload", src: "resources/bundle/init"},
+
     /* Graphics.
      * @example
      * { name: "example", type:"image", src: "data/img/example.png" },

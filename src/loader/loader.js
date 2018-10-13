@@ -54,7 +54,7 @@
                 }
             }
             else {
-                timerId = setTimeout(function() {
+                timerId = setTimeout(function () {
                     checkLoadStatus(onload);
                 }, 100);
             }
@@ -230,7 +230,17 @@
             httpReq.open("GET", data.src + api.nocache, true);
             httpReq.withCredentials = me.loader.withCredentials;
             httpReq.onerror = onerror;
-            httpReq.onload = onload;
+            httpReq.onreadystatechange = function () {
+                if (httpReq.readyState === 4) {
+                    // status = 0 when file protocol is used, or cross-domain origin,
+                    // (With Chrome use "--allow-file-access-from-files --disable-web-security")
+                    if ((httpReq.status === 200) || ((httpReq.status === 0) && httpReq.responseText)) {
+                        onload();
+                    } else {
+                        onerror();
+                    }
+                }
+            };
             httpReq.send();
         }
 
@@ -276,12 +286,12 @@
             }
             script.defer = true;
 
-            script.onload = function() {
+            script.onload = function () {
                 // callback
                 onload();
             };
 
-            script.onerror = function() {
+            script.onerror = function () {
                 // callback
                 onerror();
             };
@@ -375,8 +385,8 @@
             /**
              * @ignore
              */
-            init : function (msg) {
-                this._super(me.Error, "init", [ msg ]);
+            init: function (msg) {
+                this._super(me.Error, "init", [msg]);
                 this.name = "me.loader.Error";
             }
         });
@@ -574,6 +584,7 @@
                     return 1;
 
                 default:
+                    console.log("unknown type: " + res.type);
                     throw new api.Error("load : unknown or invalid resource type : " + res.type);
             }
         };
@@ -654,8 +665,8 @@
             for (name in binList) {
                 if (binList.hasOwnProperty(name)) {
                     api.unload({
-                        "name" : name,
-                        "type" : "binary"
+                        "name": name,
+                        "type": "binary"
                     });
                 }
             }
@@ -664,8 +675,8 @@
             for (name in imgList) {
                 if (imgList.hasOwnProperty(name)) {
                     api.unload({
-                        "name" : name,
-                        "type" : "image"
+                        "name": name,
+                        "type": "image"
                     });
                 }
             }
@@ -674,8 +685,8 @@
             for (name in tmxList) {
                 if (tmxList.hasOwnProperty(name)) {
                     api.unload({
-                        "name" : name,
-                        "type" : "tmx"
+                        "name": name,
+                        "type": "tmx"
                     });
                 }
             }
@@ -684,8 +695,8 @@
             for (name in jsonList) {
                 if (jsonList.hasOwnProperty(name)) {
                     api.unload({
-                        "name" : name,
-                        "type" : "json"
+                        "name": name,
+                        "type": "json"
                     });
                 }
             }
